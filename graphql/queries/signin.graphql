@@ -1,0 +1,7 @@
+query Signin($parameters: signinParameters!) {
+
+    signin(parameters: $parameters) {
+
+        ...authData
+    }
+}

@@ -1,0 +1,105 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Mutation {
+  createPost(parameters: createPostParameters!): operationResponse!
+  deletePost(parameters: deletePostParameters!): operationResponse!
+  register(parameters: registerParameters!): authResponse!
+  resetPassword(parameters: resetPasswordParameters!): operationResponse!
+  updatePost(parameters: updatePostParameters!): operationResponse!
+  vote(parameters: voteParameters!): operationResponse!
+}
+
+type Query {
+  fetchPost(parameters: fetchPostParameters!): fetchPostResponse!
+  requestResetPassword(parameters: requestResetPasswordParameters!): operationResponse!
+  signin(parameters: signinParameters!): authResponse!
+}
+
+type authResponse {
+  accessToken: String
+  error: String
+  userDetails: userDetails
+}
+
+input createPostParameters {
+  description: String!
+  title: String!
+}
+
+input deletePostParameters {
+  _id: ID!
+}
+
+input fetchPostParameters {
+  _id: ID!
+}
+
+type fetchPostResponse {
+  error: String
+  post: postEntity
+}
+
+type operationResponse {
+  error: String
+  operationResult: Boolean
+}
+
+type postEntity {
+  _id: ID!
+  createdAt: DateTime!
+  creator: userEntity!
+  description: String!
+  points: Int!
+  title: String!
+  updatedAt: DateTime!
+  voteStatus: Int
+}
+
+input registerParameters {
+  email: String!
+  password: String!
+  username: String!
+}
+
+input requestResetPasswordParameters {
+  email: String!
+}
+
+input resetPasswordParameters {
+  newPassword: String!
+  resetToken: String!
+}
+
+input signinParameters {
+  identifier: String!
+  password: String!
+}
+
+input updatePostParameters {
+  _id: ID!
+  description: String!
+  title: String!
+}
+
+type userDetails {
+  _id: ID!
+  username: String!
+}
+
+type userEntity {
+  _id: ID!
+  email: String!
+  username: String!
+}
+
+input voteParameters {
+  postID: String!
+  value: Int!
+}

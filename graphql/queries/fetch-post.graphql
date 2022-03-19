@@ -1,0 +1,22 @@
+query FetchPost($parameters: fetchPostParameters!) {
+
+    fetchPost(parameters: $parameters) {
+
+        error
+        post {
+
+            _id
+            title
+            description
+            points
+            voteStatus
+            createdAt
+            updatedAt
+
+            creator {
+
+                username
+            }
+        }
+    }
+}

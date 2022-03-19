@@ -1,0 +1,7 @@
+mutation Register($parameters: registerParameters!) {
+
+    register(parameters: $parameters) {
+
+        ...authData
+    }
+}

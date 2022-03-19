@@ -1,0 +1,10 @@
+fragment authData on authResponse {
+
+    error
+    accessToken
+    userDetails {
+
+        _id
+        username
+    }
+}
