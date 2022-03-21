@@ -1,7 +1,7 @@
 import { registerValidationSchema } from "@./frontend"
 import { Form, Formik } from "formik"
 import { NextPage } from "next"
-import { FormTextField } from "../components/form-input.component"
+import { FormTextField } from "../components/global/form-input.component"
 import { ChangeAuthStatusText, CoverImage, FormSubmitButton, Screen, Wrapper } from "../styles/global.styles"
 import WelcomeImagePath from "../images/welcome.png"
 import { Icon, Text } from "@chakra-ui/react"

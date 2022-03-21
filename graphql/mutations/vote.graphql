@@ -1,0 +1,8 @@
+mutation Vote ($parameters: voteParameters!) {
+
+    vote(parameters: $parameters) {
+
+        error
+        operationResult
+    }
+}

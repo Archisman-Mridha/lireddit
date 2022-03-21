@@ -18,6 +18,7 @@ type Mutation {
 
 type Query {
   fetchPost(parameters: fetchPostParameters!): fetchPostResponse!
+  fetchPosts(parameters: fetchPostsParameters!): fetchPostsResponse!
   requestResetPassword(parameters: requestResetPasswordParameters!): operationResponse!
   signin(parameters: signinParameters!): authResponse!
 }
@@ -44,6 +45,16 @@ input fetchPostParameters {
 type fetchPostResponse {
   error: String
   post: postEntity
+}
+
+input fetchPostsParameters {
+  limit: Int = 5
+  offset: Int = 0
+}
+
+type fetchPostsResponse {
+  error: String
+  posts: [postEntity!]
 }
 
 type operationResponse {

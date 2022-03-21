@@ -5,9 +5,9 @@ import { dispatchType } from "../redux/store"
 export function useLogout( ) {
     const dispatch= useDispatch<dispatchType>( )
 
-    return function logoutHandler(successCallback: ( ) => void) {
-        dispatch({ type: actions.userReducerActions.logoutUserAction })
+    return function logoutHandler(callback: ( ) => void) {
+        callback( )
 
-        successCallback( )
+        dispatch({ type: actions.userReducerActions.logoutUserAction })
     }
 }

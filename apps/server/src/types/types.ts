@@ -1,4 +1,4 @@
-import { Field, InputType, ObjectType, PickType } from "@nestjs/graphql"
+import { Field, InputType, Int, ObjectType, PickType } from "@nestjs/graphql"
 import { createGraphQLResponse } from "../generators/graphql-respnse.generator"
 import { postEntity } from "../models/post.model"
 import { userEntity } from "../models/user.model"
@@ -41,6 +41,16 @@ export class createPostParameters extends PickType(postEntity, ["title", "descri
 export class fetchPostParameters extends PickType(postEntity, ["_id"], InputType) { }
 
 @InputType( )
+export class fetchPostsParameters {
+
+    @Field(( ) => Int, { defaultValue: 5 })
+    limit: number
+
+    @Field(( ) => Int, { defaultValue: 0 })
+    offset: number
+}
+
+@InputType( )
 export class updatePostParameters extends PickType(postEntity, ["_id", "title", "description"], InputType) { }
 
 @InputType( )
@@ -64,3 +74,6 @@ export class operationResponse extends createGraphQLResponse<boolean>(Boolean, "
 
 @ObjectType( )
 export class fetchPostResponse extends createGraphQLResponse<postEntity>(postEntity, "post") { }
+
+@ObjectType( )
+export class fetchPostsResponse extends createGraphQLResponse<postEntity[ ]>([postEntity], "posts") { }

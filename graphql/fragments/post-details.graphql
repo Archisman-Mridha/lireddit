@@ -1,0 +1,15 @@
+fragment postDetails on postEntity {
+
+    _id
+    title
+    description
+    points
+    voteStatus
+    createdAt
+    updatedAt
+
+    creator {
+
+        username
+    }
+}

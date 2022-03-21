@@ -1,14 +1,15 @@
 import { NextPage } from "next"
-import { CoverImage, FormSubmitButton, Screen, Wrapper } from "../styles/global.styles"
+import { CoverImage, FormSubmitButton, PostsWrapper } from "../styles/global.styles"
 import PostImagePath from "../images/post.png"
 import { Icon, Text } from "@chakra-ui/react"
 import { Form, Formik } from "formik"
-import { FormTextField } from "../components/form-input.component"
+import { FormTextField } from "../components/global/form-input.component"
 import { BsArrowRightCircle } from "react-icons/bs"
 import { createPostValidationSchema, useCreatePost } from "@./frontend"
-import { Protected } from "../components/protected.component"
+import { Protected } from "../components/global/protected.component"
 import { useRouter } from "next/router"
 import { useErrorCallback } from "../hooks/useErrorCallback.hook"
+import { Navbar } from "../components/global/navbar.component"
 
 const initialValues= {
 
@@ -19,9 +20,9 @@ const initialValues= {
 const CreatePost: NextPage= ( ) => {
     const createPostHandler= useCreatePost( )
 
-    const { push }= useRouter( )
+    const { replace }= useRouter( )
 
-    const successCallback= ( ) => push("/")
+    const successCallback= ( ) => replace("/")
 
     const errorCallback= useErrorCallback( )
 
@@ -31,57 +32,57 @@ const CreatePost: NextPage= ( ) => {
 
         <>
             <Protected>
-                <Screen>
-                    <Wrapper>
-                        <CoverImage
-                            src= {PostImagePath.src}
-                        />
+                <Navbar />
 
-                        <Text fontSize= "14px" marginBottom= "22.5px" maxWidth= "450px">
-                            Enter details about your amazing new post !
-                        </Text>
+                <PostsWrapper>
+                    <CoverImage
+                        src= {PostImagePath.src}
+                    />
 
-                        <Formik
-                            initialValues= { initialValues }
-                            validationSchema= { createPostValidationSchema }
-                            onSubmit= { submitHandler }
-                        >
-                            {
-                                ({ setFieldValue, handleSubmit, isSubmitting }) => (
+                    <Text fontSize= "14px" marginBottom= "22.5px" maxWidth= "450px">
+                        Enter details about your amazing new post !
+                    </Text>
 
-                                    <>
-                                        <Form>
-                                            <FormTextField
-                                                placeholder= "Title"
-                                                inputType= "text"
-                                                name= "title"
-                                                setFieldValue= { setFieldValue }
-                                            />
+                    <Formik
+                        initialValues= { initialValues }
+                        validationSchema= { createPostValidationSchema }
+                        onSubmit= { submitHandler }
+                    >
+                        {
+                            ({ setFieldValue, handleSubmit, isSubmitting }) => (
 
-                                            <FormTextField
-                                                placeholder= "Description"
-                                                inputType= "text"
-                                                name= "description"
-                                                setFieldValue= { setFieldValue }
-                                                isTextArea
-                                            />
+                                <>
+                                    <Form>
+                                        <FormTextField
+                                            placeholder= "Title"
+                                            inputType= "text"
+                                            name= "title"
+                                            setFieldValue= { setFieldValue }
+                                        />
 
-                                            <FormSubmitButton
-                                                rightIcon= {<Icon as= { BsArrowRightCircle } />}
-                                                onClick= {( ) => handleSubmit( )}
-                                                isLoading= { isSubmitting }
-                                                marginTop= "7.5px"
-                                            >
-                                                Create Post
-                                            </FormSubmitButton>
-                                        </Form>
-                                    </>
+                                        <FormTextField
+                                            placeholder= "Description"
+                                            inputType= "text"
+                                            name= "description"
+                                            setFieldValue= { setFieldValue }
+                                            isTextArea
+                                        />
 
-                                )
-                            }
-                        </Formik>
-                    </Wrapper>
-                </Screen>
+                                        <FormSubmitButton
+                                            rightIcon= {<Icon as= { BsArrowRightCircle } />}
+                                            onClick= {( ) => handleSubmit( )}
+                                            isLoading= { isSubmitting }
+                                            marginTop= "7.5px"
+                                        >
+                                            Create Post
+                                        </FormSubmitButton>
+                                    </Form>
+                                </>
+
+                            )
+                        }
+                    </Formik>
+                </PostsWrapper>
             </Protected>
         </>
 

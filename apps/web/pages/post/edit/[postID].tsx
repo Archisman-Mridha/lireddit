@@ -1,47 +1,53 @@
-import { signinValidationSchema, useSignin } from "@./frontend"
-import { Form, Formik } from "formik"
 import { NextPage } from "next"
-import { FormTextField } from "../components/global/form-input.component"
-import { ChangeAuthStatusText, CoverImage, FormSubmitButton, ResetPasswordText, Screen, Wrapper } from "../styles/global.styles"
-import WelcomeImagePath from "../images/welcome.png"
+import { CoverImage, FormSubmitButton, PostsWrapper } from "../../../styles/global.styles"
+import PostImagePath from "../../../images/post.png"
 import { Icon, Text } from "@chakra-ui/react"
+import { Form, Formik } from "formik"
+import { FormTextField } from "../../../components/global/form-input.component"
 import { BsArrowRightCircle } from "react-icons/bs"
-import { useErrorCallback } from "../hooks/useErrorCallback.hook"
+import { createPostValidationSchema, useUpdatePost } from "@./frontend"
+import { Protected } from "../../../components/global/protected.component"
 import { useRouter } from "next/router"
+import { useErrorCallback } from "../../../hooks/useErrorCallback.hook"
+import { Navbar } from "apps/web/components/global/navbar.component"
 
 const initialValues= {
 
-    identifier: "",
-    password: ""
+    title: "",
+    description: ""
 }
 
-const Signin: NextPage= ( ) => {
-    const signinHandler= useSignin( )
+const EditPost: NextPage= ( ) => {
+    const updatePostHandler= useUpdatePost( )
 
-    const { push }= useRouter( )
-
-    const errorCallback= useErrorCallback( )
+    const { push, query }= useRouter( )
 
     const successCallback= ( ) => push("/")
 
-    const submitHandler= (formData: typeof initialValues) => signinHandler(formData, successCallback, errorCallback)
+    const errorCallback= useErrorCallback( )
+
+    const submitHandler= (formData: typeof initialValues) => updatePostHandler(
+        { ...formData, _id: query["postID"] as string }, successCallback, errorCallback
+    )
 
     return (
 
         <>
-            <Screen>
-                <Wrapper>
+            <Protected>
+                <Navbar />
+
+                <PostsWrapper>
                     <CoverImage
-                        src= {WelcomeImagePath.src}
+                        src= {PostImagePath.src}
                     />
 
                     <Text fontSize= "14px" marginBottom= "22.5px" maxWidth= "450px">
-                        Enter your registered username or email as account identifier and the account password
+                        Update your post and make it more amazing
                     </Text>
 
                     <Formik
                         initialValues= { initialValues }
-                        validationSchema= { signinValidationSchema }
+                        validationSchema= { createPostValidationSchema }
                         onSubmit= { submitHandler }
                     >
                         {
@@ -50,20 +56,19 @@ const Signin: NextPage= ( ) => {
                                 <>
                                     <Form>
                                         <FormTextField
-                                            placeholder= "Identifier"
+                                            placeholder= "Title"
                                             inputType= "text"
-                                            name= "identifier"
+                                            name= "title"
                                             setFieldValue= { setFieldValue }
                                         />
 
                                         <FormTextField
-                                            placeholder= "Secure Password"
-                                            inputType= "password"
-                                            name= "password"
+                                            placeholder= "Description"
+                                            inputType= "text"
+                                            name= "description"
                                             setFieldValue= { setFieldValue }
+                                            isTextArea
                                         />
-
-                                        <ResetPasswordText href= "/request-password-reset">request reset password</ResetPasswordText>
 
                                         <FormSubmitButton
                                             rightIcon= {<Icon as= { BsArrowRightCircle } />}
@@ -71,7 +76,7 @@ const Signin: NextPage= ( ) => {
                                             isLoading= { isSubmitting }
                                             marginTop= "7.5px"
                                         >
-                                            Signin
+                                            Update Post
                                         </FormSubmitButton>
                                     </Form>
                                 </>
@@ -79,13 +84,11 @@ const Signin: NextPage= ( ) => {
                             )
                         }
                     </Formik>
-
-                    <ChangeAuthStatusText href= "/register">or register</ChangeAuthStatusText>
-                </Wrapper>
-            </Screen>
+                </PostsWrapper>
+            </Protected>
         </>
 
     )
 }
 
-export default Signin
+export default EditPost

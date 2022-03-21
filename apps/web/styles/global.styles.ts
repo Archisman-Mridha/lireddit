@@ -1,5 +1,5 @@
 import { sharedTheme } from "@./frontend"
-import { Image, Input, FormErrorMessage, Button, Box, Center } from "@chakra-ui/react"
+import { Image, Input, FormErrorMessage, Button, Box, Center, Textarea } from "@chakra-ui/react"
 import styled from "styled-components"
 
 export const Screen= styled(Center)`
@@ -30,11 +30,12 @@ export const CoverImage= styled(Image)`
 
 export const StyledInput= styled(Input)``
 
-StyledInput.defaultProps= {
+export const StyledTextArea= styled(Textarea)``
+
+const defaultInputProps= {
 
     fontSize: "14px",
     flex: 1,
-    height: "47.5px",
     marginBottom: "10px",
     borderWidth: "1.5px",
     maxWidth: "450px",
@@ -45,6 +46,18 @@ StyledInput.defaultProps= {
 
         marginBottom: "-2.5px"
     }
+}
+
+StyledInput.defaultProps= {
+
+    ...defaultInputProps,
+    height: "47.5px",
+}
+
+StyledTextArea.defaultProps= {
+
+    ...defaultInputProps,
+    resize: "vertical"
 }
 
 export const InputFieldError= styled(FormErrorMessage)``

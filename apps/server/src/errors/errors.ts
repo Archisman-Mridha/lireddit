@@ -33,10 +33,15 @@ export const errors= {
     postCRUDErrors: {
 
         createPostFailedError: "failed creating post",
+
         updatePostFailedError: "failed updating post",
+        unauthorizedToUpdateError: "only the creator can update this post",
+
         deletePostFailedError: "failed deleting post",
 
         readPostFailedError: "failed fetching post",
         fetchPostsFailedError: "failed fetching posts"
-    }
+    },
+
+    voteFailureError: "failed voting on post"
 }

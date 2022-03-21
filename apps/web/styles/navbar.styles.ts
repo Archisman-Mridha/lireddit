@@ -1,4 +1,3 @@
-import { sharedTheme } from "@./frontend"
 import { Flex } from "@chakra-ui/react"
 import styled from "styled-components"
 
@@ -7,7 +6,7 @@ export const NavbarLayout= styled(Flex)`
     z-index: 100;
     position: sticky;
     top: 0px;
-    background-color: ${ sharedTheme.colors.blue };
+    background-color: tan;
 `
 
 export const NavbarContentLayout= styled(Flex)`

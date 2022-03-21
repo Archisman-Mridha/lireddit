@@ -1,15 +1,15 @@
 import { errors } from "../errors/errors"
-import { CreatePostParameters, useCreatePostMutation } from "../generated/graphql"
+import { DeletePostParameters, useDeletePostMutation } from "../generated/graphql"
 import { useSelector } from "react-redux"
 import { rootStateType } from "../redux/store"
 
-export function useCreatePost( ) {
-    const [ createPostMutation ]= useCreatePostMutation( )
+export function useDeletePost( ) {
+    const [ deletePostMutation ]= useDeletePostMutation( )
 
     const accessToken= useSelector<rootStateType>(reduxState => reduxState.userReducer.accessToken)
 
-    return async function createPostHandler(parameters: CreatePostParameters, successCallback: ( ) => void, errorCallback: (error: string) => void) {
-        const { data, errors: serverErrors }= await createPostMutation({
+    return async function DeletePostHandler(parameters: DeletePostParameters, successCallback: ( ) => void, errorCallback: (error: string) => void) {
+        const { data, errors: serverErrors }= await deletePostMutation({
 
             variables: { parameters },
             context: { headers: { Authorization: `Bearer ${ accessToken }` }},
@@ -19,8 +19,8 @@ export function useCreatePost( ) {
         if(serverErrors || !data)
             errorCallback(errors.serverError)
 
-        else if(data.createPost.error)
-            errorCallback(data.createPost.error)
+        else if(data.deletePost.error)
+            errorCallback(data.deletePost.error)
 
         else successCallback( )
     }

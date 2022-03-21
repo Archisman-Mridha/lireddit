@@ -43,27 +43,20 @@ exports.getRedisConfig = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const nestjs_redis_1 = __webpack_require__("@liaoliaots/nestjs-redis");
 const config_1 = __webpack_require__("@nestjs/config");
-const test_utils_1 = __webpack_require__("./apps/server/src/utils/test.utils.ts");
-const redis_memory_server_1 = __webpack_require__("redis-memory-server");
-let testRedisDB;
 function getRedisConfig() {
     return nestjs_redis_1.RedisModule.forRootAsync({
         imports: [config_1.ConfigModule],
         inject: [config_1.ConfigService],
         useFactory: (configService) => (0, tslib_1.__awaiter)(this, void 0, void 0, function* () {
-            if ((0, test_utils_1.isTestEnvironment)()) {
-                testRedisDB = new redis_memory_server_1.RedisMemoryServer();
-                yield testRedisDB.start();
-            }
-            return {
+            return ({
                 config: {
                     username: "default",
                     password: "password",
-                    host: (0, test_utils_1.isTestEnvironment)() ? yield testRedisDB.getHost() : configService.get("REDIS_DB_HOST"),
-                    port: (0, test_utils_1.isTestEnvironment)() ? yield testRedisDB.getPort() : 13455,
+                    host: configService.get("REDIS_DB_HOST"),
+                    port: 13455,
                     onClientReady: client => client.on("error", error => console.error(error))
                 }
-            };
+            });
         })
     });
 }
@@ -101,11 +94,50 @@ exports.errors = {
     postCRUDErrors: {
         createPostFailedError: "failed creating post",
         updatePostFailedError: "failed updating post",
+        unauthorizedToUpdateError: "only the creator can update this post",
         deletePostFailedError: "failed deleting post",
         readPostFailedError: "failed fetching post",
         fetchPostsFailedError: "failed fetching posts"
-    }
+    },
+    voteFailureError: "failed voting on post"
 };
+
+
+/***/ }),
+
+/***/ "./apps/server/src/functions/create-server.function.ts":
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
+
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+exports.createServer = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const core_1 = __webpack_require__("@nestjs/core");
+const platform_express_1 = __webpack_require__("@nestjs/platform-express");
+const test_utils_1 = __webpack_require__("./apps/server/src/utils/test.utils.ts");
+const app_module_1 = __webpack_require__("./apps/server/src/modules/app.module.ts");
+const testing_1 = __webpack_require__("@nestjs/testing");
+var app;
+function createServer(port) {
+    return (0, tslib_1.__awaiter)(this, void 0, void 0, function* () {
+        try {
+            if ((0, test_utils_1.isTestEnvironment)()) {
+                const testingModule = yield testing_1.Test.createTestingModule({
+                    imports: [app_module_1.appModule]
+                }).compile();
+                app = testingModule.createNestApplication();
+            }
+            app = yield core_1.NestFactory.create(app_module_1.appModule, new platform_express_1.ExpressAdapter(), { cors: true });
+            yield app.init();
+            app.listen(port, () => (0, test_utils_1.isDevEnvironment)() && console.info(`server started at port ${port}`));
+            return app;
+        }
+        catch (error) {
+            console.error(error);
+        }
+    });
+}
+exports.createServer = createServer;
 
 
 /***/ }),
@@ -277,12 +309,12 @@ let postEntity = class postEntity {
 ], postEntity.prototype, "voteStatus", void 0);
 (0, tslib_1.__decorate)([
     (0, graphql_1.Field)(() => graphql_1.GraphQLISODateTime),
-    (0, mongoose_1.Prop)({ type: Date, default: Date.now() }),
+    (0, mongoose_1.Prop)({ type: Date, default: new Date() }),
     (0, tslib_1.__metadata)("design:type", typeof (_b = typeof Date !== "undefined" && Date) === "function" ? _b : Object)
 ], postEntity.prototype, "createdAt", void 0);
 (0, tslib_1.__decorate)([
     (0, graphql_1.Field)(() => graphql_1.GraphQLISODateTime),
-    (0, mongoose_1.Prop)({ type: Date, default: Date.now() }),
+    (0, mongoose_1.Prop)({ type: Date, default: new Date() }),
     (0, tslib_1.__metadata)("design:type", typeof (_c = typeof Date !== "undefined" && Date) === "function" ? _c : Object)
 ], postEntity.prototype, "updatedAt", void 0);
 postEntity = (0, tslib_1.__decorate)([
@@ -399,11 +431,11 @@ let appModule = class appModule {
 appModule = (0, tslib_1.__decorate)([
     (0, common_1.Module)({
         imports: [
-            config_1.ConfigModule.forRoot({ envFilePath: (0, path_1.join)(process.env.PWD, ".env"), isGlobal: true }),
+            config_1.ConfigModule.forRoot({ isGlobal: true }),
             (0, mongoose_config_1.getMongooseConfig)(),
             graphql_1.GraphQLModule.forRoot({
                 driver: apollo_1.ApolloDriver,
-                autoSchemaFile: test_utils_1.isDevEnvironment ? (0, path_1.join)(process.env.PWD, "apps/server/src/graphql/schema.graphql") : true,
+                autoSchemaFile: (0, test_utils_1.isDevEnvironment)() ? (0, path_1.join)(process.env.PWD, "apps/server/src/graphql/schema.graphql") : true,
                 context: ({ req, res }) => ({ req, res }),
                 sortSchema: true
             }),
@@ -556,7 +588,7 @@ exports.userModule = userModule;
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
-var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q;
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l, _m, _o, _p, _q, _r, _s, _t, _u, _v;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.postResolver = void 0;
 const tslib_1 = __webpack_require__("tslib");
@@ -572,11 +604,19 @@ let postResolver = class postResolver {
     constructor(postService) {
         this.postService = postService;
     }
+    voteStatus(post, context) {
+        return (0, tslib_1.__awaiter)(this, void 0, void 0, function* () {
+            return this.postService.resolveVoteStatus(post, context);
+        });
+    }
     createPost(parameters, context) {
         return this.postService.createPost(parameters, context);
     }
     fetchPost(parameters) {
         return this.postService.fetchPost(parameters);
+    }
+    fetchPosts(parameters) {
+        return this.postService.fetchPosts(parameters);
     }
     updatePost(parameters, context) {
         return this.postService.updatePost(parameters, context);
@@ -589,23 +629,39 @@ let postResolver = class postResolver {
     }
 };
 (0, tslib_1.__decorate)([
+    (0, graphql_1.ResolveField)(() => graphql_1.Int, { nullable: true }),
+    (0, tslib_1.__param)(0, (0, graphql_1.Root)()),
+    (0, tslib_1.__param)(1, (0, graphql_1.Context)()),
+    (0, tslib_1.__metadata)("design:type", Function),
+    (0, tslib_1.__metadata)("design:paramtypes", [typeof (_a = typeof post_model_1.postEntity !== "undefined" && post_model_1.postEntity) === "function" ? _a : Object, typeof (_b = typeof context_type_1.graphQLContext !== "undefined" && context_type_1.graphQLContext) === "function" ? _b : Object]),
+    (0, tslib_1.__metadata)("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
+], postResolver.prototype, "voteStatus", null);
+(0, tslib_1.__decorate)([
     (0, graphql_1.Mutation)(() => types_1.operationResponse),
     (0, common_1.UseGuards)(jwt_guard_1.JWTGuard),
     (0, common_1.UseGuards)(create_post_guard_1.createPostGuard),
     (0, tslib_1.__param)(0, (0, graphql_1.Args)("parameters")),
     (0, tslib_1.__param)(1, (0, graphql_1.Context)()),
     (0, tslib_1.__metadata)("design:type", Function),
-    (0, tslib_1.__metadata)("design:paramtypes", [typeof (_a = typeof types_1.createPostParameters !== "undefined" && types_1.createPostParameters) === "function" ? _a : Object, typeof (_b = typeof context_type_1.graphQLContext !== "undefined" && context_type_1.graphQLContext) === "function" ? _b : Object]),
-    (0, tslib_1.__metadata)("design:returntype", typeof (_c = typeof Promise !== "undefined" && Promise) === "function" ? _c : Object)
+    (0, tslib_1.__metadata)("design:paramtypes", [typeof (_d = typeof types_1.createPostParameters !== "undefined" && types_1.createPostParameters) === "function" ? _d : Object, typeof (_e = typeof context_type_1.graphQLContext !== "undefined" && context_type_1.graphQLContext) === "function" ? _e : Object]),
+    (0, tslib_1.__metadata)("design:returntype", typeof (_f = typeof Promise !== "undefined" && Promise) === "function" ? _f : Object)
 ], postResolver.prototype, "createPost", null);
 (0, tslib_1.__decorate)([
     (0, graphql_1.Query)(() => types_1.fetchPostResponse),
     (0, common_1.UseGuards)(jwt_guard_1.JWTGuard),
     (0, tslib_1.__param)(0, (0, graphql_1.Args)("parameters")),
     (0, tslib_1.__metadata)("design:type", Function),
-    (0, tslib_1.__metadata)("design:paramtypes", [typeof (_d = typeof types_1.fetchPostParameters !== "undefined" && types_1.fetchPostParameters) === "function" ? _d : Object]),
-    (0, tslib_1.__metadata)("design:returntype", typeof (_e = typeof Promise !== "undefined" && Promise) === "function" ? _e : Object)
+    (0, tslib_1.__metadata)("design:paramtypes", [typeof (_g = typeof types_1.fetchPostParameters !== "undefined" && types_1.fetchPostParameters) === "function" ? _g : Object]),
+    (0, tslib_1.__metadata)("design:returntype", typeof (_h = typeof Promise !== "undefined" && Promise) === "function" ? _h : Object)
 ], postResolver.prototype, "fetchPost", null);
+(0, tslib_1.__decorate)([
+    (0, graphql_1.Query)(() => types_1.fetchPostsResponse),
+    (0, common_1.UseGuards)(jwt_guard_1.JWTGuard),
+    (0, tslib_1.__param)(0, (0, graphql_1.Args)("parameters")),
+    (0, tslib_1.__metadata)("design:type", Function),
+    (0, tslib_1.__metadata)("design:paramtypes", [typeof (_j = typeof types_1.fetchPostsParameters !== "undefined" && types_1.fetchPostsParameters) === "function" ? _j : Object]),
+    (0, tslib_1.__metadata)("design:returntype", typeof (_k = typeof Promise !== "undefined" && Promise) === "function" ? _k : Object)
+], postResolver.prototype, "fetchPosts", null);
 (0, tslib_1.__decorate)([
     (0, graphql_1.Mutation)(() => types_1.operationResponse),
     (0, common_1.UseGuards)(jwt_guard_1.JWTGuard),
@@ -613,8 +669,8 @@ let postResolver = class postResolver {
     (0, tslib_1.__param)(0, (0, graphql_1.Args)("parameters")),
     (0, tslib_1.__param)(1, (0, graphql_1.Context)()),
     (0, tslib_1.__metadata)("design:type", Function),
-    (0, tslib_1.__metadata)("design:paramtypes", [typeof (_f = typeof types_1.updatePostParameters !== "undefined" && types_1.updatePostParameters) === "function" ? _f : Object, typeof (_g = typeof context_type_1.graphQLContext !== "undefined" && context_type_1.graphQLContext) === "function" ? _g : Object]),
-    (0, tslib_1.__metadata)("design:returntype", typeof (_h = typeof Promise !== "undefined" && Promise) === "function" ? _h : Object)
+    (0, tslib_1.__metadata)("design:paramtypes", [typeof (_l = typeof types_1.updatePostParameters !== "undefined" && types_1.updatePostParameters) === "function" ? _l : Object, typeof (_m = typeof context_type_1.graphQLContext !== "undefined" && context_type_1.graphQLContext) === "function" ? _m : Object]),
+    (0, tslib_1.__metadata)("design:returntype", typeof (_o = typeof Promise !== "undefined" && Promise) === "function" ? _o : Object)
 ], postResolver.prototype, "updatePost", null);
 (0, tslib_1.__decorate)([
     (0, graphql_1.Mutation)(() => types_1.operationResponse),
@@ -622,8 +678,8 @@ let postResolver = class postResolver {
     (0, tslib_1.__param)(0, (0, graphql_1.Args)("parameters")),
     (0, tslib_1.__param)(1, (0, graphql_1.Context)()),
     (0, tslib_1.__metadata)("design:type", Function),
-    (0, tslib_1.__metadata)("design:paramtypes", [typeof (_j = typeof types_1.deletePostParameters !== "undefined" && types_1.deletePostParameters) === "function" ? _j : Object, typeof (_k = typeof context_type_1.graphQLContext !== "undefined" && context_type_1.graphQLContext) === "function" ? _k : Object]),
-    (0, tslib_1.__metadata)("design:returntype", typeof (_l = typeof Promise !== "undefined" && Promise) === "function" ? _l : Object)
+    (0, tslib_1.__metadata)("design:paramtypes", [typeof (_p = typeof types_1.deletePostParameters !== "undefined" && types_1.deletePostParameters) === "function" ? _p : Object, typeof (_q = typeof context_type_1.graphQLContext !== "undefined" && context_type_1.graphQLContext) === "function" ? _q : Object]),
+    (0, tslib_1.__metadata)("design:returntype", typeof (_r = typeof Promise !== "undefined" && Promise) === "function" ? _r : Object)
 ], postResolver.prototype, "deletePost", null);
 (0, tslib_1.__decorate)([
     (0, graphql_1.Mutation)(() => types_1.operationResponse),
@@ -631,13 +687,13 @@ let postResolver = class postResolver {
     (0, tslib_1.__param)(0, (0, graphql_1.Args)("parameters")),
     (0, tslib_1.__param)(1, (0, graphql_1.Context)()),
     (0, tslib_1.__metadata)("design:type", Function),
-    (0, tslib_1.__metadata)("design:paramtypes", [typeof (_m = typeof types_1.voteParameters !== "undefined" && types_1.voteParameters) === "function" ? _m : Object, typeof (_o = typeof context_type_1.graphQLContext !== "undefined" && context_type_1.graphQLContext) === "function" ? _o : Object]),
-    (0, tslib_1.__metadata)("design:returntype", typeof (_p = typeof Promise !== "undefined" && Promise) === "function" ? _p : Object)
+    (0, tslib_1.__metadata)("design:paramtypes", [typeof (_s = typeof types_1.voteParameters !== "undefined" && types_1.voteParameters) === "function" ? _s : Object, typeof (_t = typeof context_type_1.graphQLContext !== "undefined" && context_type_1.graphQLContext) === "function" ? _t : Object]),
+    (0, tslib_1.__metadata)("design:returntype", typeof (_u = typeof Promise !== "undefined" && Promise) === "function" ? _u : Object)
 ], postResolver.prototype, "vote", null);
 postResolver = (0, tslib_1.__decorate)([
     (0, common_1.Injectable)(),
     (0, graphql_1.Resolver)(() => post_model_1.postEntity),
-    (0, tslib_1.__metadata)("design:paramtypes", [typeof (_q = typeof post_service_1.postService !== "undefined" && post_service_1.postService) === "function" ? _q : Object])
+    (0, tslib_1.__metadata)("design:paramtypes", [typeof (_v = typeof post_service_1.postService !== "undefined" && post_service_1.postService) === "function" ? _v : Object])
 ], postResolver);
 exports.postResolver = postResolver;
 
@@ -763,13 +819,19 @@ let postService = class postService {
             }
         });
     }
-    fetchPosts() {
+    fetchPosts(parameters) {
         return (0, tslib_1.__awaiter)(this, void 0, void 0, function* () {
             try {
+                const posts = yield this.postModel.find({})
+                    .sort({ updatedAt: -1 })
+                    .skip(parameters.offset)
+                    .limit(parameters.limit)
+                    .populate("creator", { _id: 1, username: 1 });
+                return { data: posts };
             }
             catch (error) {
                 console.error(error);
-                return { error };
+                return { error: errors_1.errors.postCRUDErrors.fetchPostsFailedError };
             }
         });
     }
@@ -777,7 +839,10 @@ let postService = class postService {
         return (0, tslib_1.__awaiter)(this, void 0, void 0, function* () {
             try {
                 const creatorID = this.jwtUtils.parseUserID(req);
-                yield this.postModel.findOneAndUpdate({ _id: parameters._id, creator: creatorID }, { $set: Object.assign({}, parameters) });
+                const postDocument = yield this.postModel.findById(parameters._id);
+                if (postDocument.creator !== creatorID)
+                    return { error: errors_1.errors.postCRUDErrors.unauthorizedToUpdateError };
+                yield postDocument.updateOne({ $set: Object.assign(Object.assign({}, parameters), { updatedAt: new Date() }) });
                 return { data: true };
             }
             catch (error) {
@@ -803,7 +868,7 @@ let postService = class postService {
         return (0, tslib_1.__awaiter)(this, void 0, void 0, function* () {
             try {
                 const userID = this.jwtUtils.parseUserID(req);
-                const voteDocument = yield this.voteModel.findOne({ postID: parameters.postID, userID }, { _id: 1 }), postDocument = yield this.postModel.findById(parameters.postID, { _id: 1 });
+                const voteDocument = yield this.voteModel.findOne({ postID: parameters.postID, userID }, { _id: 1, value: 1 }), postDocument = yield this.postModel.findById(parameters.postID, { _id: 1, points: 1 });
                 //* filter parameters
                 {
                     if (!postDocument)
@@ -814,28 +879,31 @@ let postService = class postService {
                         parameters.value = -1;
                 }
                 if (!voteDocument) {
-                    if (parameters.value === 0)
-                        return { error: "couldn't complete request" };
-                    else {
-                        yield this.voteModel.create(Object.assign(Object.assign({}, parameters), { userID }));
-                        yield postDocument.updateOne({ $inc: { points: parameters.value } });
-                    }
+                    yield this.voteModel.create(Object.assign(Object.assign({}, parameters), { userID }));
+                    yield postDocument.updateOne({ $inc: { points: parameters.value } });
                 }
-                else {
-                    if (parameters.value === 0) {
-                        yield postDocument.updateOne({ $inc: { points: -voteDocument.value } });
-                        yield voteDocument.deleteOne();
-                    }
-                    else if (parameters.value !== voteDocument.value) {
-                        yield voteDocument.updateOne({ $set: { value: parameters.value } });
-                        yield postDocument.updateOne({ $inc: { points: 2 * parameters.value } });
-                    }
+                else if (parameters.value !== voteDocument.value) {
+                    yield voteDocument.updateOne({ $set: { value: parameters.value } });
+                    yield postDocument.updateOne({ $inc: { points: 2 * parameters.value } });
                 }
                 return { data: true };
             }
             catch (error) {
                 console.error(error);
-                return { error };
+                return { error: errors_1.errors.voteFailureError };
+            }
+        });
+    }
+    resolveVoteStatus(post, { req }) {
+        return (0, tslib_1.__awaiter)(this, void 0, void 0, function* () {
+            try {
+                const userID = this.jwtUtils.parseUserID(req);
+                const voteDocument = yield this.voteModel.findOne({ userID, postID: post._id.toString() });
+                return voteDocument ? voteDocument.value : 0;
+            }
+            catch (error) {
+                console.error(error);
+                return 0;
             }
         });
     }
@@ -1032,7 +1100,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.fetchPostResponse = exports.operationResponse = exports.authResponse = exports.userDetails = exports.voteParameters = exports.deletePostParameters = exports.updatePostParameters = exports.fetchPostParameters = exports.createPostParameters = exports.resetPasswordParameters = exports.requestResetPasswordParameters = exports.signinParameters = exports.registerParameters = void 0;
+exports.fetchPostsResponse = exports.fetchPostResponse = exports.operationResponse = exports.authResponse = exports.userDetails = exports.voteParameters = exports.deletePostParameters = exports.updatePostParameters = exports.fetchPostsParameters = exports.fetchPostParameters = exports.createPostParameters = exports.resetPasswordParameters = exports.requestResetPasswordParameters = exports.signinParameters = exports.registerParameters = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const graphql_1 = __webpack_require__("@nestjs/graphql");
 const graphql_respnse_generator_1 = __webpack_require__("./apps/server/src/generators/graphql-respnse.generator.ts");
@@ -1095,6 +1163,20 @@ fetchPostParameters = (0, tslib_1.__decorate)([
     (0, graphql_1.InputType)()
 ], fetchPostParameters);
 exports.fetchPostParameters = fetchPostParameters;
+let fetchPostsParameters = class fetchPostsParameters {
+};
+(0, tslib_1.__decorate)([
+    (0, graphql_1.Field)(() => graphql_1.Int, { defaultValue: 5 }),
+    (0, tslib_1.__metadata)("design:type", Number)
+], fetchPostsParameters.prototype, "limit", void 0);
+(0, tslib_1.__decorate)([
+    (0, graphql_1.Field)(() => graphql_1.Int, { defaultValue: 0 }),
+    (0, tslib_1.__metadata)("design:type", Number)
+], fetchPostsParameters.prototype, "offset", void 0);
+fetchPostsParameters = (0, tslib_1.__decorate)([
+    (0, graphql_1.InputType)()
+], fetchPostsParameters);
+exports.fetchPostsParameters = fetchPostsParameters;
 let updatePostParameters = class updatePostParameters extends (0, graphql_1.PickType)(post_model_1.postEntity, ["_id", "title", "description"], graphql_1.InputType) {
 };
 updatePostParameters = (0, tslib_1.__decorate)([
@@ -1141,6 +1223,12 @@ fetchPostResponse = (0, tslib_1.__decorate)([
     (0, graphql_1.ObjectType)()
 ], fetchPostResponse);
 exports.fetchPostResponse = fetchPostResponse;
+let fetchPostsResponse = class fetchPostsResponse extends (0, graphql_respnse_generator_1.createGraphQLResponse)([post_model_1.postEntity], "posts") {
+};
+fetchPostsResponse = (0, tslib_1.__decorate)([
+    (0, graphql_1.ObjectType)()
+], fetchPostsResponse);
+exports.fetchPostsResponse = fetchPostsResponse;
 
 
 /***/ }),
@@ -1176,15 +1264,39 @@ exports.JWTUtils = JWTUtils;
 /***/ }),
 
 /***/ "./apps/server/src/utils/test.utils.ts":
-/***/ ((__unused_webpack_module, exports) => {
+/***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.isDevEnvironment = exports.isTestEnvironment = void 0;
+exports.executeRequest = exports.createTestUser = exports.loadGraphQLFile = exports.isDevEnvironment = exports.isTestEnvironment = void 0;
+const tslib_1 = __webpack_require__("tslib");
+const faker_1 = __webpack_require__("faker");
+const graphql_import_files_1 = __webpack_require__("graphql-import-files");
+const pactum_1 = __webpack_require__("pactum");
 const isTestEnvironment = () => "development" === "test";
 exports.isTestEnvironment = isTestEnvironment;
 const isDevEnvironment = () => "development" === "development";
 exports.isDevEnvironment = isDevEnvironment;
+const loadGraphQLFile = (subpath) => (0, graphql_import_files_1.loadFile)(`graphql/${subpath}.graphql`);
+exports.loadGraphQLFile = loadGraphQLFile;
+const createTestUser = () => ({
+    username: faker_1.name.firstName() + faker_1.name.lastName(),
+    email: faker_1.internet.email(),
+    password: faker_1.internet.password(6)
+});
+exports.createTestUser = createTestUser;
+function executeRequest(graphQLQuery, parameters, field) {
+    return (0, tslib_1.__awaiter)(this, void 0, void 0, function* () {
+        const response = yield (0, pactum_1.spec)()
+            .post("http://localhost:5000/graphql")
+            .withGraphQLQuery(graphQLQuery)
+            .withGraphQLVariables({ parameters })
+            .expectStatus(200)
+            .toss();
+        return response.body.data[field];
+    });
+}
+exports.executeRequest = executeRequest;
 
 
 /***/ }),
@@ -1259,6 +1371,13 @@ module.exports = require("@nestjs/platform-express");
 
 /***/ }),
 
+/***/ "@nestjs/testing":
+/***/ ((module) => {
+
+module.exports = require("@nestjs/testing");
+
+/***/ }),
+
 /***/ "@nestjs/throttler":
 /***/ ((module) => {
 
@@ -1287,6 +1406,20 @@ module.exports = require("bcryptjs");
 
 /***/ }),
 
+/***/ "faker":
+/***/ ((module) => {
+
+module.exports = require("faker");
+
+/***/ }),
+
+/***/ "graphql-import-files":
+/***/ ((module) => {
+
+module.exports = require("graphql-import-files");
+
+/***/ }),
+
 /***/ "ioredis":
 /***/ ((module) => {
 
@@ -1308,17 +1441,17 @@ module.exports = require("mongoose");
 
 /***/ }),
 
+/***/ "pactum":
+/***/ ((module) => {
+
+module.exports = require("pactum");
+
+/***/ }),
+
 /***/ "passport-jwt":
 /***/ ((module) => {
 
 module.exports = require("passport-jwt");
-
-/***/ }),
-
-/***/ "redis-memory-server":
-/***/ ((module) => {
-
-module.exports = require("redis-memory-server");
 
 /***/ }),
 
@@ -1383,24 +1516,8 @@ var __webpack_exports__ = {};
 var exports = __webpack_exports__;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const tslib_1 = __webpack_require__("tslib");
-const core_1 = __webpack_require__("@nestjs/core");
-const platform_express_1 = __webpack_require__("@nestjs/platform-express");
-const app_module_1 = __webpack_require__("./apps/server/src/modules/app.module.ts");
-const port = 4000;
-function main() {
-    return (0, tslib_1.__awaiter)(this, void 0, void 0, function* () {
-        try {
-            const app = yield core_1.NestFactory.create(app_module_1.appModule, new platform_express_1.ExpressAdapter(), { cors: true });
-            yield app.init();
-            app.listen(port, () => console.info(`server started at port ${port}`));
-        }
-        catch (error) {
-            console.error(error);
-        }
-    });
-}
-main();
+const create_server_function_1 = __webpack_require__("./apps/server/src/functions/create-server.function.ts");
+(0, create_server_function_1.createServer)(4000);
 
 })();
 

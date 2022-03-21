@@ -5,7 +5,9 @@ WORKDIR /app
 COPY ./dist/package.json .
 RUN yarn
 
-COPY ./dist .
+COPY .env .env
+
+COPY ./dist/main.js .
 
 EXPOSE 4000
 

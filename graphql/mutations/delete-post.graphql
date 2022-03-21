@@ -1,0 +1,8 @@
+mutation DeletePost($parameters: deletePostParameters!) {
+
+    deletePost(parameters: $parameters) {
+
+        error
+        operationResult
+    }
+}

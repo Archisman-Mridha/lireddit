@@ -2,6 +2,12 @@ mutation Register($parameters: registerParameters!) {
 
     register(parameters: $parameters) {
 
-        ...authData
+        error
+        accessToken
+        userDetails {
+
+            _id
+            username
+        }
     }
 }

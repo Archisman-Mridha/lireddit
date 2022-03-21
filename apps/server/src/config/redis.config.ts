@@ -1,9 +1,5 @@
 import { RedisModule } from "@liaoliaots/nestjs-redis"
 import { ConfigModule, ConfigService } from "@nestjs/config"
-import { isTestEnvironment } from "../utils/test.utils"
-import { RedisMemoryServer } from "redis-memory-server"
-
-let testRedisDB: RedisMemoryServer
 
 export function getRedisConfig( ) {
     return RedisModule.forRootAsync({
@@ -11,26 +7,15 @@ export function getRedisConfig( ) {
         imports: [ ConfigModule ],
         inject: [ ConfigService ],
 
-        useFactory: async (configService: ConfigService) => {
-            if(isTestEnvironment( )) {
-                testRedisDB= new RedisMemoryServer( )
+        useFactory: async (configService: ConfigService) => ({
+            config: {
 
-                await testRedisDB.start( )
+                username: "default",
+                password: "password",
+                host: configService.get("REDIS_DB_HOST"),
+                port: 13455,
+                onClientReady: client => client.on("error", error => console.error(error))
             }
-
-            return {
-                config: {
-
-                    username: "default",
-                    password: "password",
-                    host:
-                        isTestEnvironment( ) ? await testRedisDB.getHost( ): configService.get("REDIS_DB_HOST"),
-
-                    port: isTestEnvironment( ) ? await testRedisDB.getPort( ): 13455,
-
-                    onClientReady: client => client.on("error", error => console.error(error))
-                }
-            }
-        }
+        })
     })
 }

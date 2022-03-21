@@ -1,0 +1,8 @@
+mutation UpdatePost($parameters: updatePostParameters!) {
+
+    updatePost(parameters: $parameters) {
+
+        error
+        operationResult
+    }
+}

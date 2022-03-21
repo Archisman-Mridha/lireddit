@@ -15,14 +15,14 @@ import { globalModule } from "./global.module"
 @Module({
 
     imports: [
-        ConfigModule.forRoot({ envFilePath: join(process.env.PWD, ".env"), isGlobal: true }),
+        ConfigModule.forRoot({ isGlobal: true }),
 
         getMongooseConfig( ),
 
         GraphQLModule.forRoot<ApolloDriverConfig>({
 
             driver: ApolloDriver,
-            autoSchemaFile: isDevEnvironment ? join(process.env.PWD, "apps/server/src/graphql/schema.graphql") : true,
+            autoSchemaFile: isDevEnvironment( ) ? join(process.env.PWD, "apps/server/src/graphql/schema.graphql") : true,
             context: ({ req, res }) => ({ req, res }),
             sortSchema: true
         }),

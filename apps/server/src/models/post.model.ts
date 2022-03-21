@@ -30,10 +30,10 @@ export class postEntity {
     voteStatus: number | null
 
     @Field(( ) => GraphQLISODateTime)
-    @Prop({ type: Date, default: Date.now( ) })
+    @Prop({ type: Date, default: new Date( ) })
     createdAt: Date
 
     @Field(( ) => GraphQLISODateTime)
-    @Prop({ type: Date, default: Date.now( ) })
+    @Prop({ type: Date, default: new Date( ) })
     updatedAt: Date
 }

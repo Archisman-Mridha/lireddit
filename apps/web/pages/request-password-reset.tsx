@@ -4,7 +4,7 @@ import WelcomeImagePath from "../images/welcome.png"
 import { BsArrowRightCircle } from "react-icons/bs"
 import { Form, Formik } from "formik"
 import { requestResetPasswordValidationSchema, useRequestResetPassword } from "@./frontend"
-import { FormTextField } from "../components/form-input.component"
+import { FormTextField } from "../components/global/form-input.component"
 import { useErrorCallback } from "../hooks/useErrorCallback.hook"
 import { CoverImage, FormSubmitButton, Screen, Wrapper } from "../styles/global.styles"
 
