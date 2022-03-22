@@ -851,7 +851,7 @@ let postService = class postService {
             try {
                 const creatorID = this.jwtUtils.parseUserID(req);
                 const postDocument = yield this.postModel.findById(parameters._id);
-                if (postDocument.creator !== creatorID)
+                if (postDocument.creator.toString() !== creatorID)
                     return { error: errors_1.errors.postCRUDErrors.unauthorizedToUpdateError };
                 yield postDocument.updateOne({ $set: Object.assign(Object.assign({}, parameters), { updatedAt: new Date() }) });
                 return { data: true };

@@ -72,7 +72,7 @@ export class postService {
 
             const postDocument= await this.postModel.findById(parameters._id)
 
-            if(postDocument.creator !== creatorID)
+            if(postDocument.creator.toString( ) !== creatorID)
                 return { error: errors.postCRUDErrors.unauthorizedToUpdateError }
 
             await postDocument.updateOne({ $set: { ...parameters, updatedAt: new Date( ) }})
