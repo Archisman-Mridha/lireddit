@@ -909,7 +909,6 @@ let postService = class postService {
         return (0, tslib_1.__awaiter)(this, void 0, void 0, function* () {
             try {
                 const userID = this.jwtUtils.parseUserID(req);
-                console.info(userID);
                 const voteDocument = yield this.voteModel.findOne({ userID, postID: post._id.toString() });
                 return voteDocument ? voteDocument.value : 0;
             }

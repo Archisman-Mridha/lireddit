@@ -8,14 +8,13 @@ export function useUpdatePost( ) {
 
     const accessToken= useSelector<rootStateType>(reduxState => reduxState.userReducer.accessToken)
 
-    return async function UpdatePostHandler(parameters: UpdatePostParameters, successCallback: ( ) => void, errorCallback: (error: string) => void) {
+    return async function updatePostHandler(parameters: UpdatePostParameters, successCallback: ( ) => void, errorCallback: (error: string) => void) {
         const { data, errors: serverErrors }= await updatePostMutation({
 
             variables: { parameters },
-            context: { headers: { Authorization: `Bearer ${ accessToken }` }}
+            context: { headers: { Authorization: `Bearer ${ accessToken }` }},
+            update: cache => cache.evict({ fieldName: "fetchPosts:{}" })
         })
-
-        console.info(serverErrors, data!.updatePost.error)
 
         if(serverErrors || !data)
             errorCallback(errors.serverError)
