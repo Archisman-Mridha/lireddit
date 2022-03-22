@@ -15,7 +15,7 @@ import { globalModule } from "./global.module"
 @Module({
 
     imports: [
-        ConfigModule.forRoot({ isGlobal: true }),
+        ConfigModule.forRoot({ envFilePath: join(process.env.PWD, ".env"), isGlobal: true }),
 
         getMongooseConfig( ),
 

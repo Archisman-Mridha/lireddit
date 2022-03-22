@@ -39,7 +39,7 @@ testem.log
 Thumbs.db
 
 # Environment Variables
-server/.env
+.env
 
 # Expo
 /mobile/node_modules

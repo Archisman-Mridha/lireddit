@@ -1,3 +1,3 @@
 import { createServer } from "./functions/create-server.function"
 
-createServer(4000)
+createServer(parseInt(process.env.PORT) || 4000)

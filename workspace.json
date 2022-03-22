@@ -2,8 +2,8 @@
     "version": 2,
     "projects": {
         "frontend": "libs/frontend",
-        "mobile": "apps/mobile",
-        "server": "apps/server",
-        "web": "apps/web"
+        "mobile": "mobile",
+        "server": "server",
+        "web": "web"
     }
 }
