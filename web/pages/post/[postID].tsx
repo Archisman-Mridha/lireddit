@@ -1,12 +1,12 @@
 import { useFetchPost } from "@./frontend"
 import { Loader } from "../../components/global/loader.component"
-import { Navbar } from "apps/web/components/global/navbar.component"
-import { Protected } from "apps/web/components/global/protected.component"
+import { Navbar } from "web/components/global/navbar.component"
+import { Protected } from "web/components/global/protected.component"
 import { NextPage } from "next"
 import { useRouter } from "next/router"
 import { PostsWrapper } from "../../styles/global.styles"
 import { Post } from "../../components/posts/post.component"
-import { QueryErrorState } from "apps/web/components/global/query-error-state.component"
+import { QueryErrorState } from "web/components/global/query-error-state.component"
 
 const PostDetails: NextPage= ( ) => {
     const { query }= useRouter( )

@@ -5,7 +5,7 @@ import { FiEdit2 } from "react-icons/fi"
 import NextLink from "next/link"
 import { useDeletePost } from "@./frontend"
 import { useRouter } from "next/router"
-import { useErrorCallback } from "apps/web/hooks/useErrorCallback.hook"
+import { useErrorCallback } from "web/hooks/useErrorCallback.hook"
 
 interface postUtilsProps {
 

@@ -9,7 +9,7 @@ import { createPostValidationSchema, useUpdatePost } from "@./frontend"
 import { Protected } from "../../../components/global/protected.component"
 import { useRouter } from "next/router"
 import { useErrorCallback } from "../../../hooks/useErrorCallback.hook"
-import { Navbar } from "apps/web/components/global/navbar.component"
+import { Navbar } from "web/components/global/navbar.component"
 
 const initialValues= {
 

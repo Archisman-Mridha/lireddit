@@ -7,7 +7,7 @@ import { BsArrowRightCircle } from "react-icons/bs"
 import { resetPasswordValidationSchema, useResetPassword } from "@./frontend"
 import { useRouter } from "next/router"
 import { useErrorCallback } from "../../hooks/useErrorCallback.hook"
-import { FormTextField } from "apps/web/components/global/form-input.component"
+import { FormTextField } from "web/components/global/form-input.component"
 
 const initialValues= { newPassword: "" }
 
