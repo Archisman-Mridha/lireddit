@@ -1,9 +1,10 @@
 import { Injectable, UseGuards } from "@nestjs/common"
-import { Args, Mutation, Query, Resolver } from "@nestjs/graphql"
+import { Args, Context, Mutation, Query, Resolver } from "@nestjs/graphql"
 import { registerGuard } from "../guards/register.guard"
 import { userEntity } from "../models/user.model"
-import { registerParameters, authResponse, signinParameters, operationResponse, requestResetPasswordParameters, resetPasswordParameters } from "../types/types"
+import { registerParameters, authResponse, signinParameters, operationResponse, requestResetPasswordParameters, resetPasswordParameters, fetchCurrentUserResponse } from "../types/types"
 import { userService } from "../services/user.service"
+import { graphQLContext } from "../types/context.type"
 
 @Injectable( )
 @Resolver(( ) => userEntity)
@@ -29,5 +30,10 @@ export class userResolver {
     @Mutation(( ) => operationResponse)
     resetPassword(@Args("parameters") parameters: resetPasswordParameters): Promise<operationResponse> {
         return this.userService.resetPassword(parameters)
+    }
+
+    @Query(( ) => fetchCurrentUserResponse)
+    fetchCurrentUser(@Context( ) context: graphQLContext): Promise<fetchCurrentUserResponse> {
+        return this.userService.fetchCurrentUser(context)
     }
 }

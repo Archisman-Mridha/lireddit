@@ -70,6 +70,9 @@ export class authResponse extends createGraphQLResponse<userDetails>(userDetails
 }
 
 @ObjectType( )
+export class fetchCurrentUserResponse extends createGraphQLResponse<userEntity>(userEntity, "user") { }
+
+@ObjectType( )
 export class operationResponse extends createGraphQLResponse<boolean>(Boolean, "operationResult") { }
 
 @ObjectType( )

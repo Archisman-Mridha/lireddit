@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common"
 import { InjectModel } from "@nestjs/mongoose"
 import { userEntity } from "../models/user.model"
 import { Document, Model } from "mongoose"
-import { registerParameters, authResponse, signinParameters, requestResetPasswordParameters, operationResponse, resetPasswordParameters } from "../types/types"
+import { registerParameters, authResponse, signinParameters, requestResetPasswordParameters, operationResponse, resetPasswordParameters, fetchCurrentUserResponse } from "../types/types"
 import { errors } from "../errors/errors"
 import validator from "validator"
 import { compare, genSalt, hash } from "bcryptjs"
@@ -13,6 +13,7 @@ import { MailService } from "@sendgrid/mail"
 import { isTestEnvironment } from "../utils/test.utils"
 import { InjectSendGrid } from "@ntegral/nestjs-sendgrid"
 import { JWTUtils } from "../utils/jwt.utils"
+import { graphQLContext } from "../types/context.type"
 
 @Injectable( )
 export class userService {
@@ -38,10 +39,12 @@ export class userService {
 
             const newUser= await this.userModel.create(parameters)
 
+            const accessToken= await this.jwtUtils.createAccessToken(newUser._id.toString( ))
+
             return {
 
                 data: { _id: newUser._id, username: newUser.username },
-                accessToken: await this.jwtUtils.createAccessToken(newUser._id.toString( ))
+                accessToken
             }
         } catch(error) {
             console.error(error)
@@ -66,10 +69,12 @@ export class userService {
             )
                 return { error: errors.signinErrors.wrongPasswordError }
 
+            const accessToken= await this.jwtUtils.createAccessToken(existingUser._id.toString( ))
+
             return {
 
                 data: { _id: existingUser._id, username: existingUser.username },
-                accessToken: await this.jwtUtils.createAccessToken(existingUser._id.toString( ))
+                accessToken
             }
         } catch(error) {
             console.error(error)
@@ -133,6 +138,23 @@ export class userService {
             console.error(error)
 
             return { error: errors.resetPasswordErrors.resetPasswordFailureError }
+        }
+    }
+
+    async fetchCurrentUser({ req }: graphQLContext): Promise<fetchCurrentUserResponse> {
+        try{
+            const userID= this.jwtUtils.parseUserID(req)
+
+            const existingUser= await this.userModel.findById(userID)
+
+            if(! existingUser)
+                return { error: "user not found" }
+
+            else return { data: existingUser }
+        } catch(error) {
+            console.error(error)
+
+            return { error: "failed fetching current user" }
         }
     }
 }

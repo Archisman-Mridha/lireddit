@@ -17,6 +17,7 @@ type Mutation {
 }
 
 type Query {
+  fetchCurrentUser: fetchCurrentUserResponse!
   fetchPost(parameters: fetchPostParameters!): fetchPostResponse!
   fetchPosts(parameters: fetchPostsParameters!): fetchPostsResponse!
   requestResetPassword(parameters: requestResetPasswordParameters!): operationResponse!
@@ -36,6 +37,11 @@ input createPostParameters {
 
 input deletePostParameters {
   _id: ID!
+}
+
+type fetchCurrentUserResponse {
+  error: String
+  user: userEntity
 }
 
 input fetchPostParameters {

@@ -4,7 +4,7 @@ import { graphQLErrorHandler } from "../handlers/graphql-errors.handler"
 export const apolloClient= new ApolloClient({
 
     ssrMode: true,
-    link: from([ graphQLErrorHandler, new HttpLink({ uri: "https://lireddit-cloned.herokuapp.com/graphql" }) ]),
+    link: from([ graphQLErrorHandler, new HttpLink({ uri: "http://localhost:4000/graphql" }) ]),
     cache: new InMemoryCache({
 
         typePolicies: {
@@ -25,3 +25,5 @@ export const apolloClient= new ApolloClient({
         }
     })
 })
+
+// s://lireddit-cloned.herokuapp.com

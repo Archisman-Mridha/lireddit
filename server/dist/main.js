@@ -704,7 +704,7 @@ exports.postResolver = postResolver;
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
-var _a, _b, _c, _d, _e, _f, _g, _h, _j;
+var _a, _b, _c, _d, _e, _f, _g, _h, _j, _k, _l;
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.userResolver = void 0;
 const tslib_1 = __webpack_require__("tslib");
@@ -714,6 +714,7 @@ const register_guard_1 = __webpack_require__("./server/src/guards/register.guard
 const user_model_1 = __webpack_require__("./server/src/models/user.model.ts");
 const types_1 = __webpack_require__("./server/src/types/types.ts");
 const user_service_1 = __webpack_require__("./server/src/services/user.service.ts");
+const context_type_1 = __webpack_require__("./server/src/types/context.type.ts");
 let userResolver = class userResolver {
     constructor(userService) {
         this.userService = userService;
@@ -729,6 +730,9 @@ let userResolver = class userResolver {
     }
     resetPassword(parameters) {
         return this.userService.resetPassword(parameters);
+    }
+    fetchCurrentUser(context) {
+        return this.userService.fetchCurrentUser(context);
     }
 };
 (0, tslib_1.__decorate)([
@@ -760,10 +764,17 @@ let userResolver = class userResolver {
     (0, tslib_1.__metadata)("design:paramtypes", [typeof (_g = typeof types_1.resetPasswordParameters !== "undefined" && types_1.resetPasswordParameters) === "function" ? _g : Object]),
     (0, tslib_1.__metadata)("design:returntype", typeof (_h = typeof Promise !== "undefined" && Promise) === "function" ? _h : Object)
 ], userResolver.prototype, "resetPassword", null);
+(0, tslib_1.__decorate)([
+    (0, graphql_1.Query)(() => types_1.fetchCurrentUserResponse),
+    (0, tslib_1.__param)(0, (0, graphql_1.Context)()),
+    (0, tslib_1.__metadata)("design:type", Function),
+    (0, tslib_1.__metadata)("design:paramtypes", [typeof (_j = typeof context_type_1.graphQLContext !== "undefined" && context_type_1.graphQLContext) === "function" ? _j : Object]),
+    (0, tslib_1.__metadata)("design:returntype", typeof (_k = typeof Promise !== "undefined" && Promise) === "function" ? _k : Object)
+], userResolver.prototype, "fetchCurrentUser", null);
 userResolver = (0, tslib_1.__decorate)([
     (0, common_1.Injectable)(),
     (0, graphql_1.Resolver)(() => user_model_1.userEntity),
-    (0, tslib_1.__metadata)("design:paramtypes", [typeof (_j = typeof user_service_1.userService !== "undefined" && user_service_1.userService) === "function" ? _j : Object])
+    (0, tslib_1.__metadata)("design:paramtypes", [typeof (_l = typeof user_service_1.userService !== "undefined" && user_service_1.userService) === "function" ? _l : Object])
 ], userResolver);
 exports.userResolver = userResolver;
 
@@ -898,6 +909,7 @@ let postService = class postService {
         return (0, tslib_1.__awaiter)(this, void 0, void 0, function* () {
             try {
                 const userID = this.jwtUtils.parseUserID(req);
+                console.info(userID);
                 const voteDocument = yield this.voteModel.findOne({ userID, postID: post._id.toString() });
                 return voteDocument ? voteDocument.value : 0;
             }
@@ -958,9 +970,10 @@ let userService = class userService {
                 if (existingUser)
                     return { error: errors_1.errors.registrationErrors.usernameRegisteredError };
                 const newUser = yield this.userModel.create(parameters);
+                const accessToken = yield this.jwtUtils.createAccessToken(newUser._id.toString());
                 return {
                     data: { _id: newUser._id, username: newUser.username },
-                    accessToken: yield this.jwtUtils.createAccessToken(newUser._id.toString())
+                    accessToken
                 };
             }
             catch (error) {
@@ -977,9 +990,10 @@ let userService = class userService {
                     return { error: errors_1.errors.signinErrors.userNotFoundError };
                 else if (!(yield (0, bcryptjs_1.compare)(parameters.password, existingUser.password)))
                     return { error: errors_1.errors.signinErrors.wrongPasswordError };
+                const accessToken = yield this.jwtUtils.createAccessToken(existingUser._id.toString());
                 return {
                     data: { _id: existingUser._id, username: existingUser.username },
-                    accessToken: yield this.jwtUtils.createAccessToken(existingUser._id.toString())
+                    accessToken
                 };
             }
             catch (error) {
@@ -1030,6 +1044,22 @@ let userService = class userService {
             catch (error) {
                 console.error(error);
                 return { error: errors_1.errors.resetPasswordErrors.resetPasswordFailureError };
+            }
+        });
+    }
+    fetchCurrentUser({ req }) {
+        return (0, tslib_1.__awaiter)(this, void 0, void 0, function* () {
+            try {
+                const userID = this.jwtUtils.parseUserID(req);
+                const existingUser = yield this.userModel.findById(userID);
+                if (!existingUser)
+                    return { error: "user not found" };
+                else
+                    return { data: existingUser };
+            }
+            catch (error) {
+                console.error(error);
+                return { error: "failed fetching current user" };
             }
         });
     }
@@ -1100,7 +1130,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.fetchPostsResponse = exports.fetchPostResponse = exports.operationResponse = exports.authResponse = exports.userDetails = exports.voteParameters = exports.deletePostParameters = exports.updatePostParameters = exports.fetchPostsParameters = exports.fetchPostParameters = exports.createPostParameters = exports.resetPasswordParameters = exports.requestResetPasswordParameters = exports.signinParameters = exports.registerParameters = void 0;
+exports.fetchPostsResponse = exports.fetchPostResponse = exports.operationResponse = exports.fetchCurrentUserResponse = exports.authResponse = exports.userDetails = exports.voteParameters = exports.deletePostParameters = exports.updatePostParameters = exports.fetchPostsParameters = exports.fetchPostParameters = exports.createPostParameters = exports.resetPasswordParameters = exports.requestResetPasswordParameters = exports.signinParameters = exports.registerParameters = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const graphql_1 = __webpack_require__("@nestjs/graphql");
 const graphql_respnse_generator_1 = __webpack_require__("./server/src/generators/graphql-respnse.generator.ts");
@@ -1211,6 +1241,12 @@ authResponse = (0, tslib_1.__decorate)([
     (0, graphql_1.ObjectType)()
 ], authResponse);
 exports.authResponse = authResponse;
+let fetchCurrentUserResponse = class fetchCurrentUserResponse extends (0, graphql_respnse_generator_1.createGraphQLResponse)(user_model_1.userEntity, "user") {
+};
+fetchCurrentUserResponse = (0, tslib_1.__decorate)([
+    (0, graphql_1.ObjectType)()
+], fetchCurrentUserResponse);
+exports.fetchCurrentUserResponse = fetchCurrentUserResponse;
 let operationResponse = class operationResponse extends (0, graphql_respnse_generator_1.createGraphQLResponse)(Boolean, "operationResult") {
 };
 operationResponse = (0, tslib_1.__decorate)([
