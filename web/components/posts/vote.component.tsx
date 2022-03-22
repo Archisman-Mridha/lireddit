@@ -36,7 +36,7 @@ export const Vote: FC<voteProps>= ({ points, _id, voteStatus }) => {
     }
 
     const downvoteHandler= async ( ) => {
-        if(voteStatus === -1) {
+        if(voteStatus !== -1) {
             setLoadingState(loadingStates.downdootLoading)
 
             await voteHandler({ postID: _id, value: -1 }, errorCallback)

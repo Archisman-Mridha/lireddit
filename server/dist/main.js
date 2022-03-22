@@ -2,7 +2,7 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./src/config/mongoose.config.ts":
+/***/ "./server/src/config/mongoose.config.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -12,7 +12,7 @@ const tslib_1 = __webpack_require__("tslib");
 const config_1 = __webpack_require__("@nestjs/config");
 const mongoose_1 = __webpack_require__("@nestjs/mongoose");
 const mongodb_memory_server_1 = __webpack_require__("mongodb-memory-server");
-const test_utils_1 = __webpack_require__("./src/utils/test.utils.ts");
+const test_utils_1 = __webpack_require__("./server/src/utils/test.utils.ts");
 function getMongooseConfig() {
     return mongoose_1.MongooseModule.forRootAsync({
         imports: [config_1.ConfigModule],
@@ -34,7 +34,7 @@ exports.getMongooseConfig = getMongooseConfig;
 
 /***/ }),
 
-/***/ "./src/config/redis.config.ts":
+/***/ "./server/src/config/redis.config.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -65,7 +65,7 @@ exports.getRedisConfig = getRedisConfig;
 
 /***/ }),
 
-/***/ "./src/errors/errors.ts":
+/***/ "./server/src/errors/errors.ts":
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -105,7 +105,7 @@ exports.errors = {
 
 /***/ }),
 
-/***/ "./src/functions/create-server.function.ts":
+/***/ "./server/src/functions/create-server.function.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -114,8 +114,8 @@ exports.createServer = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const core_1 = __webpack_require__("@nestjs/core");
 const platform_express_1 = __webpack_require__("@nestjs/platform-express");
-const test_utils_1 = __webpack_require__("./src/utils/test.utils.ts");
-const app_module_1 = __webpack_require__("./src/modules/app.module.ts");
+const test_utils_1 = __webpack_require__("./server/src/utils/test.utils.ts");
+const app_module_1 = __webpack_require__("./server/src/modules/app.module.ts");
 const testing_1 = __webpack_require__("@nestjs/testing");
 var app;
 function createServer(port) {
@@ -142,7 +142,7 @@ exports.createServer = createServer;
 
 /***/ }),
 
-/***/ "./src/generators/graphql-respnse.generator.ts":
+/***/ "./server/src/generators/graphql-respnse.generator.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -171,7 +171,7 @@ exports.createGraphQLResponse = createGraphQLResponse;
 
 /***/ }),
 
-/***/ "./src/guards/create-post.guard.ts":
+/***/ "./server/src/guards/create-post.guard.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -200,7 +200,7 @@ exports.createPostGuard = createPostGuard;
 
 /***/ }),
 
-/***/ "./src/guards/jwt.guard.ts":
+/***/ "./server/src/guards/jwt.guard.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -233,7 +233,7 @@ exports.JWTGuard = JWTGuard;
 
 /***/ }),
 
-/***/ "./src/guards/register.guard.ts":
+/***/ "./server/src/guards/register.guard.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -265,7 +265,7 @@ exports.registerGuard = registerGuard;
 
 /***/ }),
 
-/***/ "./src/models/post.model.ts":
+/***/ "./server/src/models/post.model.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -276,7 +276,7 @@ const tslib_1 = __webpack_require__("tslib");
 const graphql_1 = __webpack_require__("@nestjs/graphql");
 const mongoose_1 = __webpack_require__("@nestjs/mongoose");
 const mongoose_2 = __webpack_require__("mongoose");
-const user_model_1 = __webpack_require__("./src/models/user.model.ts");
+const user_model_1 = __webpack_require__("./server/src/models/user.model.ts");
 let postEntity = class postEntity {
 };
 (0, tslib_1.__decorate)([
@@ -326,7 +326,7 @@ exports.postEntity = postEntity;
 
 /***/ }),
 
-/***/ "./src/models/user.model.ts":
+/***/ "./server/src/models/user.model.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -364,7 +364,7 @@ exports.userEntity = userEntity;
 
 /***/ }),
 
-/***/ "./src/models/vote.model.ts":
+/***/ "./server/src/models/vote.model.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -374,8 +374,8 @@ const tslib_1 = __webpack_require__("tslib");
 const graphql_1 = __webpack_require__("@nestjs/graphql");
 const mongoose_1 = __webpack_require__("@nestjs/mongoose");
 const mongoose_2 = __webpack_require__("mongoose");
-const post_model_1 = __webpack_require__("./src/models/post.model.ts");
-const user_model_1 = __webpack_require__("./src/models/user.model.ts");
+const post_model_1 = __webpack_require__("./server/src/models/post.model.ts");
+const user_model_1 = __webpack_require__("./server/src/models/user.model.ts");
 let voteEntity = class voteEntity {
 };
 (0, tslib_1.__decorate)([
@@ -406,7 +406,7 @@ exports.voteEntity = voteEntity;
 
 /***/ }),
 
-/***/ "./src/modules/app.module.ts":
+/***/ "./server/src/modules/app.module.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -418,14 +418,14 @@ const config_1 = __webpack_require__("@nestjs/config");
 const graphql_1 = __webpack_require__("@nestjs/graphql");
 const throttler_1 = __webpack_require__("@nestjs/throttler");
 const path_1 = __webpack_require__("path");
-const mongoose_config_1 = __webpack_require__("./src/config/mongoose.config.ts");
-const redis_config_1 = __webpack_require__("./src/config/redis.config.ts");
-const test_utils_1 = __webpack_require__("./src/utils/test.utils.ts");
-const user_module_1 = __webpack_require__("./src/modules/user.module.ts");
+const mongoose_config_1 = __webpack_require__("./server/src/config/mongoose.config.ts");
+const redis_config_1 = __webpack_require__("./server/src/config/redis.config.ts");
+const test_utils_1 = __webpack_require__("./server/src/utils/test.utils.ts");
+const user_module_1 = __webpack_require__("./server/src/modules/user.module.ts");
 const nestjs_sendgrid_1 = __webpack_require__("@ntegral/nestjs-sendgrid");
 const apollo_1 = __webpack_require__("@nestjs/apollo");
-const post_module_1 = __webpack_require__("./src/modules/post.module.ts");
-const global_module_1 = __webpack_require__("./src/modules/global.module.ts");
+const post_module_1 = __webpack_require__("./server/src/modules/post.module.ts");
+const global_module_1 = __webpack_require__("./server/src/modules/global.module.ts");
 let appModule = class appModule {
 };
 appModule = (0, tslib_1.__decorate)([
@@ -459,7 +459,7 @@ exports.appModule = appModule;
 
 /***/ }),
 
-/***/ "./src/modules/global.module.ts":
+/***/ "./server/src/modules/global.module.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -469,7 +469,7 @@ const tslib_1 = __webpack_require__("tslib");
 const common_1 = __webpack_require__("@nestjs/common");
 const config_1 = __webpack_require__("@nestjs/config");
 const jwt_1 = __webpack_require__("@nestjs/jwt");
-const jwt_utils_1 = __webpack_require__("./src/utils/jwt.utils.ts");
+const jwt_utils_1 = __webpack_require__("./server/src/utils/jwt.utils.ts");
 let globalModule = class globalModule {
 };
 globalModule = (0, tslib_1.__decorate)([
@@ -494,7 +494,7 @@ exports.globalModule = globalModule;
 
 /***/ }),
 
-/***/ "./src/modules/post.module.ts":
+/***/ "./server/src/modules/post.module.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -503,12 +503,12 @@ exports.postModule = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const common_1 = __webpack_require__("@nestjs/common");
 const mongoose_1 = __webpack_require__("@nestjs/mongoose");
-const post_model_1 = __webpack_require__("./src/models/post.model.ts");
-const vote_model_1 = __webpack_require__("./src/models/vote.model.ts");
-const post_resolver_1 = __webpack_require__("./src/resolvers/post.resolver.ts");
-const post_service_1 = __webpack_require__("./src/services/post.service.ts");
-const jwt_strategy_1 = __webpack_require__("./src/strategies/jwt.strategy.ts");
-const user_module_1 = __webpack_require__("./src/modules/user.module.ts");
+const post_model_1 = __webpack_require__("./server/src/models/post.model.ts");
+const vote_model_1 = __webpack_require__("./server/src/models/vote.model.ts");
+const post_resolver_1 = __webpack_require__("./server/src/resolvers/post.resolver.ts");
+const post_service_1 = __webpack_require__("./server/src/services/post.service.ts");
+const jwt_strategy_1 = __webpack_require__("./server/src/strategies/jwt.strategy.ts");
+const user_module_1 = __webpack_require__("./server/src/modules/user.module.ts");
 let postModule = class postModule {
 };
 postModule = (0, tslib_1.__decorate)([
@@ -534,7 +534,7 @@ exports.postModule = postModule;
 
 /***/ }),
 
-/***/ "./src/modules/user.module.ts":
+/***/ "./server/src/modules/user.module.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -546,9 +546,9 @@ const config_1 = __webpack_require__("@nestjs/config");
 const jwt_1 = __webpack_require__("@nestjs/jwt");
 const mongoose_1 = __webpack_require__("@nestjs/mongoose");
 const bcryptjs_1 = __webpack_require__("bcryptjs");
-const user_model_1 = __webpack_require__("./src/models/user.model.ts");
-const user_resolver_1 = __webpack_require__("./src/resolvers/user.resolver.ts");
-const user_service_1 = __webpack_require__("./src/services/user.service.ts");
+const user_model_1 = __webpack_require__("./server/src/models/user.model.ts");
+const user_resolver_1 = __webpack_require__("./server/src/resolvers/user.resolver.ts");
+const user_service_1 = __webpack_require__("./server/src/services/user.service.ts");
 let userModule = class userModule {
 };
 userModule = (0, tslib_1.__decorate)([
@@ -584,7 +584,7 @@ exports.userModule = userModule;
 
 /***/ }),
 
-/***/ "./src/resolvers/post.resolver.ts":
+/***/ "./server/src/resolvers/post.resolver.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -594,12 +594,12 @@ exports.postResolver = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const common_1 = __webpack_require__("@nestjs/common");
 const graphql_1 = __webpack_require__("@nestjs/graphql");
-const post_model_1 = __webpack_require__("./src/models/post.model.ts");
-const types_1 = __webpack_require__("./src/types/types.ts");
-const post_service_1 = __webpack_require__("./src/services/post.service.ts");
-const context_type_1 = __webpack_require__("./src/types/context.type.ts");
-const create_post_guard_1 = __webpack_require__("./src/guards/create-post.guard.ts");
-const jwt_guard_1 = __webpack_require__("./src/guards/jwt.guard.ts");
+const post_model_1 = __webpack_require__("./server/src/models/post.model.ts");
+const types_1 = __webpack_require__("./server/src/types/types.ts");
+const post_service_1 = __webpack_require__("./server/src/services/post.service.ts");
+const context_type_1 = __webpack_require__("./server/src/types/context.type.ts");
+const create_post_guard_1 = __webpack_require__("./server/src/guards/create-post.guard.ts");
+const jwt_guard_1 = __webpack_require__("./server/src/guards/jwt.guard.ts");
 let postResolver = class postResolver {
     constructor(postService) {
         this.postService = postService;
@@ -700,7 +700,7 @@ exports.postResolver = postResolver;
 
 /***/ }),
 
-/***/ "./src/resolvers/user.resolver.ts":
+/***/ "./server/src/resolvers/user.resolver.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -710,10 +710,10 @@ exports.userResolver = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const common_1 = __webpack_require__("@nestjs/common");
 const graphql_1 = __webpack_require__("@nestjs/graphql");
-const register_guard_1 = __webpack_require__("./src/guards/register.guard.ts");
-const user_model_1 = __webpack_require__("./src/models/user.model.ts");
-const types_1 = __webpack_require__("./src/types/types.ts");
-const user_service_1 = __webpack_require__("./src/services/user.service.ts");
+const register_guard_1 = __webpack_require__("./server/src/guards/register.guard.ts");
+const user_model_1 = __webpack_require__("./server/src/models/user.model.ts");
+const types_1 = __webpack_require__("./server/src/types/types.ts");
+const user_service_1 = __webpack_require__("./server/src/services/user.service.ts");
 let userResolver = class userResolver {
     constructor(userService) {
         this.userService = userService;
@@ -770,7 +770,7 @@ exports.userResolver = userResolver;
 
 /***/ }),
 
-/***/ "./src/services/post.service.ts":
+/***/ "./server/src/services/post.service.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -780,11 +780,11 @@ exports.postService = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const common_1 = __webpack_require__("@nestjs/common");
 const mongoose_1 = __webpack_require__("@nestjs/mongoose");
-const post_model_1 = __webpack_require__("./src/models/post.model.ts");
+const post_model_1 = __webpack_require__("./server/src/models/post.model.ts");
 const mongoose_2 = __webpack_require__("mongoose");
-const errors_1 = __webpack_require__("./src/errors/errors.ts");
-const jwt_utils_1 = __webpack_require__("./src/utils/jwt.utils.ts");
-const vote_model_1 = __webpack_require__("./src/models/vote.model.ts");
+const errors_1 = __webpack_require__("./server/src/errors/errors.ts");
+const jwt_utils_1 = __webpack_require__("./server/src/utils/jwt.utils.ts");
+const vote_model_1 = __webpack_require__("./server/src/models/vote.model.ts");
 let postService = class postService {
     constructor(postModel, voteModel, jwtUtils) {
         this.postModel = postModel;
@@ -919,7 +919,7 @@ exports.postService = postService;
 
 /***/ }),
 
-/***/ "./src/services/user.service.ts":
+/***/ "./server/src/services/user.service.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -929,18 +929,18 @@ exports.userService = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const common_1 = __webpack_require__("@nestjs/common");
 const mongoose_1 = __webpack_require__("@nestjs/mongoose");
-const user_model_1 = __webpack_require__("./src/models/user.model.ts");
+const user_model_1 = __webpack_require__("./server/src/models/user.model.ts");
 const mongoose_2 = __webpack_require__("mongoose");
-const errors_1 = __webpack_require__("./src/errors/errors.ts");
+const errors_1 = __webpack_require__("./server/src/errors/errors.ts");
 const validator_1 = __webpack_require__("validator");
 const bcryptjs_1 = __webpack_require__("bcryptjs");
 const nestjs_redis_1 = __webpack_require__("@liaoliaots/nestjs-redis");
 const ioredis_1 = __webpack_require__("ioredis");
 const uuid_1 = __webpack_require__("uuid");
 const mail_1 = __webpack_require__("@sendgrid/mail");
-const test_utils_1 = __webpack_require__("./src/utils/test.utils.ts");
+const test_utils_1 = __webpack_require__("./server/src/utils/test.utils.ts");
 const nestjs_sendgrid_1 = __webpack_require__("@ntegral/nestjs-sendgrid");
-const jwt_utils_1 = __webpack_require__("./src/utils/jwt.utils.ts");
+const jwt_utils_1 = __webpack_require__("./server/src/utils/jwt.utils.ts");
 let userService = class userService {
     constructor(userModel, redisClient, mailService, jwtUtils) {
         this.userModel = userModel;
@@ -1002,7 +1002,7 @@ let userService = class userService {
                         from: "archi.procoder@gmail.com",
                         subject: "Password reset link",
                         text: "Click on the link to reset your password. The link is valid for next 24 hours :",
-                        html: `<a href= "http://localhost:4200/reset-password/${resetToken}">reset password link</a>`
+                        html: `<a href= "https://6239d045ddf0fc7d295e5248--lireddit-cloned.netlify.app/reset-password/${resetToken}">reset password link</a>`
                     });
                     console.info(mailingResult);
                 }
@@ -1046,7 +1046,7 @@ exports.userService = userService;
 
 /***/ }),
 
-/***/ "./src/strategies/jwt.strategy.ts":
+/***/ "./server/src/strategies/jwt.strategy.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -1059,7 +1059,7 @@ const passport_jwt_1 = __webpack_require__("passport-jwt");
 const config_1 = __webpack_require__("@nestjs/config");
 const common_1 = __webpack_require__("@nestjs/common");
 const mongoose_1 = __webpack_require__("@nestjs/mongoose");
-const user_model_1 = __webpack_require__("./src/models/user.model.ts");
+const user_model_1 = __webpack_require__("./server/src/models/user.model.ts");
 const mongoose_2 = __webpack_require__("mongoose");
 let JWTStrategy = class JWTStrategy extends (0, passport_1.PassportStrategy)(passport_jwt_1.Strategy, "jwt") {
     constructor(configService, userModel) {
@@ -1086,7 +1086,7 @@ exports.JWTStrategy = JWTStrategy;
 
 /***/ }),
 
-/***/ "./src/types/context.type.ts":
+/***/ "./server/src/types/context.type.ts":
 /***/ ((__unused_webpack_module, exports) => {
 
 
@@ -1095,7 +1095,7 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 
 /***/ }),
 
-/***/ "./src/types/types.ts":
+/***/ "./server/src/types/types.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -1103,10 +1103,10 @@ Object.defineProperty(exports, "__esModule", ({ value: true }));
 exports.fetchPostsResponse = exports.fetchPostResponse = exports.operationResponse = exports.authResponse = exports.userDetails = exports.voteParameters = exports.deletePostParameters = exports.updatePostParameters = exports.fetchPostsParameters = exports.fetchPostParameters = exports.createPostParameters = exports.resetPasswordParameters = exports.requestResetPasswordParameters = exports.signinParameters = exports.registerParameters = void 0;
 const tslib_1 = __webpack_require__("tslib");
 const graphql_1 = __webpack_require__("@nestjs/graphql");
-const graphql_respnse_generator_1 = __webpack_require__("./src/generators/graphql-respnse.generator.ts");
-const post_model_1 = __webpack_require__("./src/models/post.model.ts");
-const user_model_1 = __webpack_require__("./src/models/user.model.ts");
-const vote_model_1 = __webpack_require__("./src/models/vote.model.ts");
+const graphql_respnse_generator_1 = __webpack_require__("./server/src/generators/graphql-respnse.generator.ts");
+const post_model_1 = __webpack_require__("./server/src/models/post.model.ts");
+const user_model_1 = __webpack_require__("./server/src/models/user.model.ts");
+const vote_model_1 = __webpack_require__("./server/src/models/vote.model.ts");
 let registerParameters = class registerParameters extends (0, graphql_1.PickType)(user_model_1.userEntity, ["username", "email"], graphql_1.InputType) {
 };
 (0, tslib_1.__decorate)([
@@ -1233,7 +1233,7 @@ exports.fetchPostsResponse = fetchPostsResponse;
 
 /***/ }),
 
-/***/ "./src/utils/jwt.utils.ts":
+/***/ "./server/src/utils/jwt.utils.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -1263,7 +1263,7 @@ exports.JWTUtils = JWTUtils;
 
 /***/ }),
 
-/***/ "./src/utils/test.utils.ts":
+/***/ "./server/src/utils/test.utils.ts":
 /***/ ((__unused_webpack_module, exports, __webpack_require__) => {
 
 
@@ -1516,7 +1516,7 @@ var __webpack_exports__ = {};
 var exports = __webpack_exports__;
 
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-const create_server_function_1 = __webpack_require__("./src/functions/create-server.function.ts");
+const create_server_function_1 = __webpack_require__("./server/src/functions/create-server.function.ts");
 (0, create_server_function_1.createServer)(parseInt(process.env.PORT) || 4000);
 
 })();

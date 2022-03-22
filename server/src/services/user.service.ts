@@ -98,7 +98,7 @@ export class userService {
                     from: "archi.procoder@gmail.com",
                     subject: "Password reset link",
                     text: "Click on the link to reset your password. The link is valid for next 24 hours :",
-                    html: `<a href= "http://localhost:4200/reset-password/${ resetToken }">reset password link</a>`
+                    html: `<a href= "https://6239d045ddf0fc7d295e5248--lireddit-cloned.netlify.app/reset-password/${ resetToken }">reset password link</a>`
                 })
 
                 console.info(mailingResult)

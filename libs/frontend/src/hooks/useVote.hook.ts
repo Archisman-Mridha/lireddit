@@ -23,12 +23,14 @@ export function useVote( ) {
             context: { headers: { Authorization: `Bearer ${ accessToken }` }},
 
             update: cache => {
+                const cacheID= cache.identify({ __typename: "postEntity", _id: parameters.postID })
+
                 const data = cache.readFragment<postFragment>({
 
-                    id: cache.identify({ __typename: "postEntity", _id: parameters.postID }),
+                    id: cacheID,
                     fragment: gql`
 
-                        fragment _ on postEntity {
+                        fragment readFragment on postEntity {
 
                             _id
                             points
@@ -45,7 +47,19 @@ export function useVote( ) {
                             : ( data.voteStatus === 1 ? -2: 2 )
                     )
 
-                    //TODO: update cache
+                    cache.writeFragment({
+
+                        id: cacheID,
+                        data: { points: updatedPoints, voteStatus: parameters.value },
+                        fragment: gql`
+
+                            fragment writeFragment on postEntity {
+
+                                points
+                                voteStatus
+                            }
+                        `
+                    })
                 }
             }
         })
