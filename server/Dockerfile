@@ -1,5 +1,7 @@
 FROM node:17-alpine
 
+ENV PORT=4000
+
 WORKDIR /app
 
 COPY ./dist/package.json .

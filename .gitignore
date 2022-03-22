@@ -39,7 +39,7 @@ testem.log
 Thumbs.db
 
 # Environment Variables
-.env
+/server/.env
 
 # Expo
 /mobile/node_modules
@@ -48,3 +48,5 @@ Thumbs.db
 
 # Next
 /web/dist
+# Local Netlify folder
+.netlify
